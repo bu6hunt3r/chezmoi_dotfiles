@@ -1,0 +1,17 @@
+---
+- name: Tmux / zsh deployment
+  hosts: localhost
+  vars:
+    gen_warning: "WARINING! This file is controlled by Ansible."
+    local_home: "{{ lookup('env', 'HOME') }}"
+    local_user: "{{ lookup('env', 'USER') }}"
+  tasks:
+    - name: check for tpm's presence
+      stat:
+        path: "{{ local_home }}/.tmux/plugins/tpm"
+      register: tpm_test
+    - name: install tmux plugin manager if not already present
+      git:
+        repo: https://github.com/tmux-plugins/tpm.git
+        dest: "{{ local_home }}/.tmux/plugins/tpm"
+      when: tpm_test.stat.islnk is not defined
